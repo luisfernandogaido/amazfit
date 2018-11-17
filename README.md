@@ -1,0 +1,2 @@
+# amazfit
+Baixa arquivos wfz
