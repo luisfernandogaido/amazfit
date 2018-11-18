@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -171,12 +172,13 @@ func getAllFiles(ids []string, c int) error {
 
 		}
 		sem <- struct{}{}
-		go func(id string) {
+		go func(i int) {
 			defer func() { <-sem }()
-			if err := getFile(id); err != nil {
+			if err := getFile(ids[i]); err != nil {
 				chErr <- err
 			}
-		}(ids[i])
+			fmt.Printf("%v/%v (%v%%)\n", i+1, len(ids), math.Round(100*float64(i+1)/float64(len(ids))))
+		}(i)
 	}
 	for i := 0; i < cap(sem); i++ {
 		sem <- struct{}{}
